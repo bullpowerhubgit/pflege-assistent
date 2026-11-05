@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pflege-Telefonassistent</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  /* Layout: dunkle Verkaufsseite; animiertes Telefon als Held; Akzent türkis (Kommunikation) */
+  :root{
+    --bg:#0a1016; --panel:#0f1b26; --panel2:#0c1620; --line:#203241;
+    --fg:#e9f1f6; --muted:#90a7b6; --accent:#2dd4bf; --accent-ink:#04201c;
+    --gold:#f5c451; --gold-ink:#241a04; --blue:#4aa8ff; --rot:#e5614f;
+    --d:"Bricolage Grotesque",-apple-system,"Segoe UI",system-ui,sans-serif;
+    --b:"IBM Plex Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--fg);font-family:var(--b);line-height:1.55;
+    background-image:radial-gradient(1000px 500px at 85% -10%,rgba(45,212,191,.10),transparent),radial-gradient(900px 500px at -5% 0%,rgba(74,168,255,.08),transparent)}
+  .wrap{max-width:960px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+  h1,h2,h3{font-family:var(--d);text-wrap:balance;margin:0;line-height:1.08}
+  .eyebrow{font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+  a{color:inherit}
+  .hero{padding-block:46px 30px;display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
+  .hero h1{font-size:clamp(34px,6vw,56px);font-weight:800;letter-spacing:-.02em}
+  .hero p.sub{color:var(--muted);font-size:clamp(16px,2.3vw,19px);margin-top:14px;max-width:36ch}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15px;border-radius:12px;padding:13px 20px;text-decoration:none;border:1px solid transparent;transition:transform .15s ease}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 30px -10px rgba(45,212,191,.55)}
+  .btn-gold{background:var(--gold);color:var(--gold-ink);box-shadow:0 10px 30px -10px rgba(245,196,81,.5)}
+  .btn-ghost{border-color:var(--line);color:var(--fg);background:rgba(255,255,255,.02)}
+  .trustline{margin-top:18px;color:var(--muted);font-size:13px;display:flex;gap:16px;flex-wrap:wrap}
+  .trustline b{color:var(--fg);font-weight:600}
+  /* animiertes Telefon */
+  .phone{justify-self:center;width:260px;max-width:100%;background:linear-gradient(180deg,#0f1f29,#0b151d);border:1px solid var(--line);border-radius:26px;padding:16px 14px 18px;box-shadow:0 36px 80px -40px rgba(0,0,0,.95)}
+  .ph-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .ph-av{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#2dd4bf,#128a7c);display:flex;align-items:center;justify-content:center;font-size:20px}
+  .ph-name{font-family:var(--d);font-weight:700;font-size:14px}
+  .ph-state{font-size:11px;color:var(--accent)}
+  .wave{display:flex;align-items:flex-end;gap:3px;height:28px;margin:4px 0 12px}
+  .wave span{flex:1;background:linear-gradient(var(--accent),#17776b);border-radius:3px;height:30%;animation:wv 1s ease-in-out infinite}
+  .wave span:nth-child(odd){animation-duration:.8s}
+  .wave span:nth-child(3n){animation-duration:1.3s}
+  @keyframes wv{0%,100%{height:20%}50%{height:95%}}
+  .chat{display:flex;flex-direction:column;gap:8px;min-height:170px}
+  .bub{max-width:85%;padding:8px 11px;border-radius:13px;font-size:12.5px;line-height:1.4;opacity:0;transform:translateY(8px);animation:rise .5s forwards}
+  .bub.a{align-self:flex-start;background:rgba(45,212,191,.14);border:1px solid rgba(45,212,191,.35);border-top-left-radius:5px;color:#c7f3ec}
+  .bub.c{align-self:flex-end;background:#14222d;border:1px solid #243644;border-top-right-radius:5px;color:var(--fg)}
+  .bub.done{align-self:center;max-width:100%;text-align:center;background:rgba(45,212,191,.12);border:1px dashed rgba(45,212,191,.5);color:#c7f3ec;font-weight:600}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .note-ai{margin-top:10px;font-size:11px;color:var(--muted);text-align:center}
+  section{padding-block:34px;border-top:1px solid var(--line)}
+  .lead{font-family:var(--d);font-weight:700;font-size:clamp(22px,3.6vw,30px);letter-spacing:-.01em}
+  .sub2{color:var(--muted);margin-top:8px;max-width:62ch}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .card h3{font-size:16px;font-weight:700;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:14px;margin:0}
+  .ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(45,212,191,.12);color:var(--accent);font-size:18px;margin-bottom:12px}
+  .transp{margin-top:22px;background:linear-gradient(180deg,rgba(74,168,255,.08),transparent);border:1px solid rgba(74,168,255,.35);border-radius:14px;padding:18px 20px}
+  .transp h3{font-size:16px;color:#bcd8ff;margin-bottom:6px}
+  .transp p{color:var(--muted);font-size:14px;margin:0}
+  .prices{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+  .price{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column}
+  .price.best{border-color:rgba(245,196,81,.6);box-shadow:0 0 0 1px rgba(245,196,81,.25)}
+  .tag{align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:3px 10px;margin-bottom:10px;background:var(--gold);color:var(--gold-ink)}
+  .amt{font-family:var(--d);font-weight:800;font-size:40px;letter-spacing:-.02em;line-height:1}
+  .amt small{font-family:var(--b);font-size:14px;font-weight:500;color:var(--muted)}
+  .per{color:var(--muted);font-size:13px;margin:6px 0 16px}
+  .price ul{list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+  .price li{display:flex;gap:9px;align-items:flex-start}
+  .price li::before{content:"✓";color:var(--accent);font-weight:700}
+  .buy{margin-top:auto;display:flex;flex-direction:column;gap:12px}
+  .qr{display:flex;align-items:center;gap:12px;background:var(--panel2);border:1px dashed var(--line);border-radius:12px;padding:10px}
+  .qr img{width:72px;height:72px;border-radius:8px;background:#fff;padding:4px}
+  .qr span{font-size:12px;color:var(--muted)}
+  .xtra{margin-top:16px;color:var(--muted);font-size:13.5px;display:flex;gap:18px;flex-wrap:wrap}
+  .xtra b{color:var(--fg)}
+  .foot{padding-block:30px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px}
+  .foot b{color:var(--fg)}
+  .foot .k{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .sel{user-select:all;color:var(--fg)}
+  @media (max-width:760px){.hero{grid-template-columns:1fr;gap:24px}.prices{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){.bub{animation:none;opacity:1;transform:none}.wave span{animation:none;height:50%}.btn{transition:none}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Pflege-Telefonassistent · von AIITEC</div>
+      <h1>Kein Anruf geht mehr verloren.</h1>
+      <p class="sub">Nimmt Anrufe rund um die Uhr an, erfasst Anliegen und Krankmeldungen und leitet sie ans Team weiter – und sagt ehrlich, dass er ein digitaler Assistent ist.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://bullpowerhubgit.github.io/pflege-assistent/" target="_blank" rel="noopener">▶︎ Hör-Demo starten</a>
+        <a class="btn btn-ghost" href="#preis">Preise ansehen</a>
+      </div>
+      <div class="trustline">
+        <span>🗣️ <b>Natürliche Stimme</b>, kein Roboter-Klang</span>
+        <span>🛡️ <b>EU-AI-Act-konform</b> &amp; datensparsam</span>
+      </div>
+    </div>
+
+    <div class="phone" aria-hidden="true">
+      <div class="ph-top">
+        <div class="ph-av">📞</div>
+        <div><div class="ph-name">Eingehender Anruf</div><div class="ph-state" id="ph-state">klingelt …</div></div>
+      </div>
+      <div class="wave" id="wave" hidden><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="chat" id="chat"></div>
+      <div class="note-ai">Der Assistent nennt sich zu Beginn als digitaler Assistent.</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="eyebrow" style="color:var(--blue)">Warum es zu Pflegediensten passt</div>
+    <div class="lead">Entlastet das überlastete Büro – trennt Routine vom Dringenden.</div>
+    <p class="sub2">Abends, am Wochenende, in Stoßzeiten: statt verpasster Anrufe ein sauber protokolliertes Anliegen im Postfach.</p>
+    <div class="cards">
+      <div class="card"><div class="ic">🕐</div><h3>24/7 Annahme</h3><p>Nimmt Anrufe an, wenn niemand im Büro ist – nichts geht verloren.</p></div>
+      <div class="card"><div class="ic">📝</div><h3>Anliegen &amp; Rückruf</h3><p>Erfasst Name, Rückrufnummer und Grund – strukturiert ans Team.</p></div>
+      <div class="card"><div class="ic">🤒</div><h3>Krankmeldungen</h3><p>Nimmt Krankmeldungen auf und leitet sie sofort weiter – passt zum Dienstplan-Wächter.</p></div>
+      <div class="card"><div class="ic">👤</div><h3>Mensch bei Sensiblem</h3><p>Medizinisches &amp; Heikles geht sofort an eine echte Person, nicht an die KI.</p></div>
+    </div>
+
+    <div class="transp">
+      <h3>Ehrlich &amp; transparent – bewusst so gebaut</h3>
+      <p>Der Anrufer hört zu Beginn, dass er mit einem digitalen Assistenten spricht. Das ist nach EU AI Act (Art. 50) vorgeschrieben – und bei verletzlichen Anrufern das einzig Richtige. Keine Täuschung, nirgends.</p>
+    </div>
+  </section>
+
+  <section id="preis">
+    <div class="eyebrow">Pilot-Preise</div>
+    <div class="lead">Starte mit 4 Wochen kostenlos an einem Standort.</div>
+    <p class="sub2">Danach entscheidest du, ob es bleibt. Preis pro Standort und Monat, Inklusiv-Minuten enthalten.</p>
+    <div class="prices">
+      <div class="price best">
+        <div class="tag">★ Pilotpreis</div>
+        <div class="amt">99&nbsp;€<small> / Monat</small></div>
+        <div class="per">pro Standort · inkl. 250 Gesprächsminuten</div>
+        <ul>
+          <li>Günstiger Einstieg</li>
+          <li>Anrufannahme + Protokoll</li>
+          <li>Krankmeldung → Team</li>
+        </ul>
+        <div class="buy">
+          <a class="btn btn-gold" href="https://buy.stripe.com/7sYcN7dzQ5PQgb68gK4F6gsH" target="_blank" rel="noopener">Pilot buchen →</a>
+          <div class="qr"><img alt="QR-Code zum Pilotpreis" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALkAAAC5AQMAAABOYwwfAAAABlBMVEULEiD///91DATCAAABoklEQVR42uVYsY3DMAxkXoVKj6BN4sUMyIAXkzfxCCpdGObfUUn33z2uyLMQnLggeeQdKZv/bKt9/otmZnn37YgnmzuOh69f9ov94QvzHTEM53uvhz16dfynct6t5NusnM/pKufcFwKhdN4sOcEuedc7v5F0dr/kzlnz29KRHWG4S2s+ur0v5X0ouz1s74npLyWAIAdVNU+HsdFR+BffTlnmDS5JsMKaU2QQyyyDvb9Zdk+OMKB6usypL/5KuvppxN513Q5iN9ScLIvq2ymD/Z7WApw3tnyNTj90zptVz1F4s0qlqUKqMXMnyyiqdj4jAh3PqxtdRqPjCUrjysECvyHwSzg3nbbTwiVY5kdUQQe7Q9yYOXVt87FRCNeozXOQnWEwAqG8NnZYrFHzYNnmumUidI2wZ/Z9jBiltifO0JimyUNthdsr2A2cL7BsclbfhJmPTYZ8g5UIQ7hMcIdrI4y14NIgVTh/gY2ui6Qv9d4eUy30JbB38Y1lrDNDZIQK16PNwPMgneEQ1/zGRoEfKS4rRX5jIeLQupgzwqn2Tz+LfAOHopIqxomYbgAAAABJRU5ErkJggg=="><span>Mit dem Handy<br>scannen &amp; zahlen</span></div>
+        </div>
+      </div>
+      <div class="price">
+        <div class="amt">149&nbsp;€<small> / Monat</small></div>
+        <div class="per">pro Standort · inkl. 500 Gesprächsminuten</div>
+        <ul>
+          <li>Für mehr Anrufvolumen</li>
+          <li>Alles aus dem Pilot</li>
+          <li>Weitere Minuten: 0,29 €/Min</li>
+        </ul>
+        <div class="buy">
+          <a class="btn btn-primary" href="https://buy.stripe.com/9B6aEZanEa662kgeF84F6gsF" target="_blank" rel="noopener">Standard buchen →</a>
+        </div>
+      </div>
+    </div>
+    <div class="xtra">
+      <span>⚙️ <b>Einrichtung einmalig ab 390 €</b> — <a href="https://buy.stripe.com/fZufZjfHY1zAbUQ9kO4F6gsG" target="_blank" rel="noopener" style="color:var(--accent)">beauftragen →</a></span>
+      <span>✉️ E-Mail-Assistent optional <b>+49 €/Monat</b></span>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div><b>AIITEC · Rudolf Sarkany</b> — ehrliche digitale Helfer für die Pflege.</div>
+    <div class="k">
+      <span>☎ <span class="sel">+49 176 22890860</span></span>
+      <span>✉ <span class="sel">aiitecbuuss@gmail.com</span></span>
+      <span>🌐 www.aiitec.online</span>
+    </div>
+    <div style="margin-top:10px;font-size:12px;opacity:.8">Konzept in Pilot-Phase · Hilfe &amp; Entlastung, keine medizinische Beratung · Kleinunternehmer gem. §19 UStG · Uttinger Str. 3, 86923 Finning</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var chat=document.getElementById('chat'), wave=document.getElementById('wave'), state=document.getElementById('ph-state');
+  if(!chat) return;
+  var steps=[
+    {cls:'a',t:'Guten Tag, hier ist der digitale Assistent von Pflegedienst Sonnenschein. Wie kann ich helfen?'},
+    {cls:'c',t:'Hallo, ich muss mich für morgen krankmelden.'},
+    {cls:'a',t:'Das tut mir leid. Darf ich Ihren Namen und Ihre Schicht notieren?'},
+    {cls:'c',t:'Timea Sarkany, Frühdienst.'},
+    {cls:'a',t:'Danke. Ich leite die Krankmeldung sofort an die Teamleitung weiter.'},
+    {cls:'done',t:'✓ Krankmeldung an das Team weitergeleitet'}
+  ];
+  function render(all){
+    chat.innerHTML='';
+    (all?steps:[]).forEach(function(s){add(s);});
+  }
+  function add(s){
+    var b=document.createElement('div');
+    b.className='bub '+s.cls;
+    b.textContent=s.t;
+    chat.appendChild(b);
+  }
+  function run(){
+    chat.innerHTML=''; state.textContent='klingelt …'; wave.hidden=true;
+    if(reduce){ state.textContent='verbunden'; wave.hidden=false; render(true); return; }
+    setTimeout(function(){ state.textContent='verbunden'; wave.hidden=false; },1100);
+    var delay=1500;
+    steps.forEach(function(s,i){
+      setTimeout(function(){ add(s); }, delay);
+      delay += 1500 + (s.t.length*14);
+    });
+    setTimeout(function(){ state.textContent='Gespräch beendet'; wave.hidden=true; }, delay);
+    setTimeout(run, delay+3200);
+  }
+  run();
+})();
+</script>
+
+</body>
+</html>
